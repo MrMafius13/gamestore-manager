@@ -27,14 +27,34 @@
 
 ## 📌 Tabla de Contenidos
 
+* [Probar en Vivo con 1 Clic (GitHub Codespaces)](#-probar-en-vivo-con-1-clic-github-codespaces)
 * [Descripción General](#-descripción-general)
 * [Características Principales](#-características-principales)
 * [Arquitectura y Tecnologías](#-arquitectura-y-tecnologías)
-* [Instalación Rápida con Docker](#-instalación-rápida-con-docker)
-* [Primeros Pasos en Odoo](#-primeros-pasos-en-odoo)
+* [Instalación Local con Docker](#-instalación-local-con-docker)
+* [Credenciales y Acceso a Odoo](#-credenciales-y-acceso-a-odoo)
 * [API REST y Demostración](#-api-rest-y-demostración)
 * [Ejecución de Tests Automatizados](#-ejecución-de-tests-automatizados)
 * [Estructura del Proyecto](#-estructura-del-proyecto)
+
+## 🚀 Probar en Vivo con 1 Clic (GitHub Codespaces)
+
+Puedes explorar la aplicación completa funcionando en la nube sin necesidad de tener Docker instalado en tu máquina local:
+
+<p align="center">
+  <a href="https://github.com/codespaces/new">
+    <img src="https://github.com/codespaces/badge.svg" alt="Open in GitHub Codespaces" width="180"/>
+  </a>
+</p>
+
+1. Haz clic en el botón superior **Open in GitHub Codespaces** (o en tu fork: *Code > Codespaces > Create codespace*).
+2. GitHub levantará el contenedor de desarrollo y arrancará **Odoo 18 + PostgreSQL 16**.
+3. El script de inicio auto-inicializa la base de datos `gamestore` e instala `gamestore_manager` con catálogo y pedidos demo.
+4. **El puerto `8069` se abrirá automáticamente en tu navegador**.
+5. **Credenciales de inicio de sesión:**
+   * **Usuario:** `admin`
+   * **Contraseña:** `admin`
+   * **Base de datos:** `gamestore`
 
 ---
 
@@ -101,10 +121,10 @@ A diferencia de proyectos tutoriales básicos, este módulo implementa:
 
 ---
 
-## 🚀 Instalación Rápida con Docker
+## 🐳 Instalación Local con Docker
 
 ### Requisitos Previos
-1. Tener instalado [Docker Desktop](https://www.docker.com/products/docker-desktop/) y abierto.
+1. Tener instalado [Docker Desktop](https://www.docker.com/products/docker-desktop/) (abierto y en ejecución).
 2. Tener instalado `git`.
 
 ### 1. Clonar el Repositorio
@@ -119,27 +139,18 @@ Ejecuta en tu terminal (PowerShell o Bash):
 docker compose up -d
 ```
 
-Docker descargará automáticamente Odoo 18 y PostgreSQL 16 y los dejará funcionando en segundo plano.
+Docker levantará los contenedores de Odoo 18 y PostgreSQL 16. El entrypoint automatizado comprobará la base de datos y, en el primer arranque, inicializará automáticamente `gamestore` con el módulo `gamestore_manager` y los datos de prueba sin necesidad de configuración manual.
 
 ---
 
-## 💻 Primeros Pasos en Odoo
+## 🔑 Credenciales y Acceso a Odoo
 
-1. Abre tu navegador web y entra en: **`http://localhost:8069`**
-2. Se mostrará el asistente de creación de base de datos de Odoo:
-   * **Master Password:** `gamestore_admin` (definida en `odoo.conf`)
-   * **Database Name:** `gamestore`
-   * **Email:** `admin`
-   * **Password:** `admin`
-   * **Language:** `Spanish (ES) / Español (ES)`
-   * **Country:** `Spain`
-   * Marca la casilla **Demo data** si deseas cargar datos generales de Odoo.
-3. Haz clic en **Create database**.
-4. Una vez dentro:
-   * Ve a **Aplicaciones** (Apps).
-   * En la barra de búsqueda, quita el filtro por defecto *"Aplicaciones"* y escribe `GameStore Manager`.
-   * Haz clic en **Activar** (Install).
-5. ¡Listo! Verás el icono de **GameStore** en el menú principal con catálogo, pedidos, informes y datos demo precargados.
+1. Abre tu navegador web y accede a: **`http://localhost:8069`**
+2. Inicia sesión directamente con las credenciales por defecto:
+   * **Base de datos:** `gamestore`
+   * **Email / Usuario:** `admin`
+   * **Contraseña:** `admin`
+3. ¡Listo! Accederás directamente al panel principal con la aplicación **GameStore Manager** activa, con catálogo precargado, clientes, pedidos e informes listos para explorar.
 
 ---
 

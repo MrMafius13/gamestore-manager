@@ -2,7 +2,7 @@
   "name": "GameStore Manager (Odoo 18)",
   "dockerComposeFile": "../docker-compose.yml",
   "service": "odoo",
-  "workspaceFolder": "/mnt/extra-addons",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "forwardPorts": [8069, 5433],
   "portsAttributes": {
     "8069": {
@@ -21,7 +21,10 @@
         "redhat.vscode-xml"
       ],
       "settings": {
-        "python.analysis.typeCheckingMode": "off"
+        "python.analysis.typeCheckingMode": "off",
+        "files.exclude": {
+          "**/__pycache__": true
+        }
       }
     }
   }
