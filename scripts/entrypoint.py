@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """
 Entrypoint inteligente para Odoo 18 en GameStore Manager.
-Detecta si la base de datos 'gamestore' existe en PostgreSQL:
-- Si no existe (primer arranque / GitHub Codespaces / clonación limpia):
-  la crea automáticamente, instala 'gamestore_manager' y carga los datos de prueba.
-- Si ya existe (desarrollo diario): arranca Odoo inmediatamente sin demoras.
+Detecta el estado de la base de datos 'gamestore' en PostgreSQL:
+1. Espera a que PostgreSQL esté listo.
+2. Si la base de datos 'gamestore' no existe en PostgreSQL, la crea con SQL nativo.
+3. Si la base de datos no tiene las tablas de Odoo, ejecuta la inicialización completa:
+   instala 'gamestore_manager' y carga los datos de demostración.
+4. Arranca el servidor web Odoo 18 en el puerto 8069.
 """
 import sys
 import time
@@ -12,8 +14,9 @@ import subprocess
 import psycopg2
 
 
-def wait_for_db(max_retries=40):
-    print("⏳ Esperando conexión con PostgreSQL (db:5432)...", flush=True)
+def wait_and_prepare_db(max_retries=60):
+    print("⏳ [1/3] Conectando a PostgreSQL (db:5432)...", flush=True)
+    conn = None
     for attempt in range(max_retries):
         try:
             conn = psycopg2.connect(
@@ -24,23 +27,49 @@ def wait_for_db(max_retries=40):
                 dbname="postgres",
             )
             conn.autocommit = True
-            cur = conn.cursor()
-            cur.execute("SELECT 1 FROM pg_database WHERE datname = 'gamestore'")
-            exists = cur.fetchone() is not None
-            conn.close()
-            return exists
-        except Exception:
+            break
+        except Exception as e:
             time.sleep(1)
-    print("⚠️ Tiempo de espera agotado al conectar con PostgreSQL.", flush=True)
-    return True
+
+    if not conn:
+        print("❌ Error: No se pudo conectar a PostgreSQL.", flush=True)
+        return False
+
+    cur = conn.cursor()
+    cur.execute("SELECT 1 FROM pg_database WHERE datname = 'gamestore'")
+    db_exists = cur.fetchone() is not None
+
+    if not db_exists:
+        print("📦 [2/3] Creando base de datos 'gamestore' en PostgreSQL...", flush=True)
+        cur.execute("CREATE DATABASE gamestore ENCODING 'utf8' OWNER odoo")
+        print("✅ Base de datos 'gamestore' creada en PostgreSQL.", flush=True)
+    conn.close()
+
+    # Comprobar si ya tiene tablas inicializadas de Odoo
+    print("🔍 Comprobando tablas de Odoo en 'gamestore'...", flush=True)
+    conn_gs = psycopg2.connect(
+        host="db",
+        port=5432,
+        user="odoo",
+        password="odoo",
+        dbname="gamestore",
+    )
+    cur_gs = conn_gs.cursor()
+    cur_gs.execute(
+        "SELECT 1 FROM information_schema.tables WHERE table_name = 'ir_module_module'"
+    )
+    tables_exist = cur_gs.fetchone() is not None
+    conn_gs.close()
+
+    return tables_exist
 
 
 def main():
-    exists = wait_for_db()
-    if not exists:
+    already_initialized = wait_and_prepare_db()
+
+    if not already_initialized:
         print(
-            "📦 Primera ejecución detectada: Creando base de datos 'gamestore' "
-            "e instalando 'gamestore_manager' con datos demo...",
+            "🚀 [3/3] Inicializando Odoo 18 e instalando 'gamestore_manager' con datos demo...",
             flush=True,
         )
         res = subprocess.run(
@@ -57,19 +86,13 @@ def main():
             ]
         )
         if res.returncode == 0:
-            print(
-                "✅ Base de datos 'gamestore' y módulo 'gamestore_manager' creados correctamente.",
-                flush=True,
-            )
+            print("✅ 'gamestore_manager' instalado correctamente.", flush=True)
         else:
-            print(
-                f"⚠️ Advertencia: odoo terminó con código de salida {res.returncode}",
-                flush=True,
-            )
+            print(f"⚠️ Odoo init finalizó con código {res.returncode}", flush=True)
     else:
-        print("✅ Base de datos 'gamestore' ya existente.", flush=True)
+        print("✅ Base de datos 'gamestore' ya inicializada. Omitiendo instalación inicial.", flush=True)
 
-    print("🚀 Arrancando servidor Odoo 18 en http://localhost:8069...", flush=True)
+    print("🌐 Arrancando servidor web Odoo 18 en http://0.0.0.0:8069...", flush=True)
     args = sys.argv[1:] if len(sys.argv) > 1 else ["--dev=reload,xml"]
     cmd = ["odoo", "-c", "/etc/odoo/odoo.conf"] + args
     subprocess.run(cmd)
