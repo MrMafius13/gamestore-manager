@@ -4,10 +4,10 @@
   "portsAttributes": {
     "8069": {
       "label": "GameStore ERP (Odoo 18)",
-      "onAutoForward": "openBrowser"
+      "onAutoForward": "notify"
     }
   },
-  "postCreateCommand": "bash -c 'docker compose up -d && echo \"Esperando a que Odoo inicialice la base de datos y arranque...\" && until curl -s -f http://localhost:8069/web/login > /dev/null 2>&1; do sleep 3; done && echo \"¡Odoo 18 listo!\"'",
+  "postCreateCommand": "docker compose up -d",
   "postStartCommand": "docker compose up -d",
   "customizations": {
     "vscode": {

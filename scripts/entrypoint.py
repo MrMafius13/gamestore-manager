@@ -94,7 +94,7 @@ def main():
 
     print("🌐 Arrancando servidor web Odoo 18 en http://0.0.0.0:8069...", flush=True)
     args = sys.argv[1:] if len(sys.argv) > 1 else ["--dev=reload,xml"]
-    cmd = ["odoo", "-c", "/etc/odoo/odoo.conf"] + args
+    cmd = ["odoo", "-c", "/etc/odoo/odoo.conf", "-d", "gamestore"] + args
     subprocess.run(cmd)
 
 
