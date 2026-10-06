@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ================================================================= -->
+    <!-- DATOS DEMO: Plataformas                                           -->
+    <!-- ================================================================= -->
+    <record id="demo_plataforma_ps5" model="gamestore.plataforma">
+        <field name="name">PlayStation 5</field>
+        <field name="fabricante">Sony Interactive Entertainment</field>
+        <field name="color">4</field>
+        <field name="sequence">1</field>
+    </record>
+
+    <record id="demo_plataforma_switch" model="gamestore.plataforma">
+        <field name="name">Nintendo Switch</field>
+        <field name="fabricante">Nintendo</field>
+        <field name="color">1</field>
+        <field name="sequence">2</field>
+    </record>
+
+    <record id="demo_plataforma_pc" model="gamestore.plataforma">
+        <field name="name">PC</field>
+        <field name="fabricante">Varios</field>
+        <field name="color">3</field>
+        <field name="sequence">3</field>
+    </record>
+
+    <record id="demo_plataforma_xbox" model="gamestore.plataforma">
+        <field name="name">Xbox Series X|S</field>
+        <field name="fabricante">Microsoft Gaming</field>
+        <field name="color">10</field>
+        <field name="sequence">4</field>
+    </record>
+
+    <!-- ================================================================= -->
+    <!-- DATOS DEMO: Géneros                                               -->
+    <!-- ================================================================= -->
+    <record id="demo_genero_rpg" model="gamestore.genero">
+        <field name="name">RPG</field>
+        <field name="color">2</field>
+    </record>
+
+    <record id="demo_genero_accion" model="gamestore.genero">
+        <field name="name">Acción / Aventura</field>
+        <field name="color">4</field>
+    </record>
+
+    <record id="demo_genero_mundo_abierto" model="gamestore.genero">
+        <field name="name">Mundo Abierto</field>
+        <field name="color">7</field>
+    </record>
+
+    <record id="demo_genero_soulslike" model="gamestore.genero">
+        <field name="name">Souls-like</field>
+        <field name="color">9</field>
+    </record>
+
+    <!-- ================================================================= -->
+    <!-- DATOS DEMO: Desarrolladoras                                       -->
+    <!-- ================================================================= -->
+    <record id="demo_dev_fromsoftware" model="gamestore.desarrolladora">
+        <field name="name">FromSoftware</field>
+        <field name="sitio_web">https://www.fromsoftware.jp</field>
+    </record>
+
+    <record id="demo_dev_nintendo" model="gamestore.desarrolladora">
+        <field name="name">Nintendo EPD</field>
+        <field name="sitio_web">https://www.nintendo.com</field>
+    </record>
+
+    <record id="demo_dev_cdprojekt" model="gamestore.desarrolladora">
+        <field name="name">CD Projekt RED</field>
+        <field name="sitio_web">https://www.cdprojekt.com</field>
+    </record>
+
+    <!-- ================================================================= -->
+    <!-- DATOS DEMO: Videojuegos                                           -->
+    <!-- ================================================================= -->
+    <record id="demo_juego_zelda" model="gamestore.videojuego">
+        <field name="name">The Legend of Zelda: Tears of the Kingdom</field>
+        <field name="plataforma_id" ref="demo_plataforma_switch"/>
+        <field name="desarrolladora_id" ref="demo_dev_nintendo"/>
+        <field name="genero_ids" eval="[(4, ref('demo_genero_accion')), (4, ref('demo_genero_mundo_abierto'))]"/>
+        <field name="precio">69.99</field>
+        <field name="stock">18</field>
+        <field name="stock_minimo">5</field>
+        <field name="pegi">12</field>
+        <field name="fecha_lanzamiento">2023-05-12</field>
+        <field name="descripcion">&lt;p&gt;Una aventura épica por las tierras y los cielos de Hyrule.&lt;/p&gt;</field>
+    </record>
+
+    <record id="demo_juego_elden_ring_ps5" model="gamestore.videojuego">
+        <field name="name">Elden Ring</field>
+        <field name="plataforma_id" ref="demo_plataforma_ps5"/>
+        <field name="desarrolladora_id" ref="demo_dev_fromsoftware"/>
+        <field name="genero_ids" eval="[(4, ref('demo_genero_rpg')), (4, ref('demo_genero_soulslike'))]"/>
+        <field name="precio">59.99</field>
+        <field name="stock">12</field>
+        <field name="stock_minimo">4</field>
+        <field name="pegi">16</field>
+        <field name="fecha_lanzamiento">2022-02-25</field>
+        <field name="descripcion">&lt;p&gt;Alzate, Sinluz, y déjate guiar por la gracia en las Tierras Intermedias.&lt;/p&gt;</field>
+    </record>
+
+    <record id="demo_juego_cyberpunk_pc" model="gamestore.videojuego">
+        <field name="name">Cyberpunk 2077: Phantom Liberty</field>
+        <field name="plataforma_id" ref="demo_plataforma_pc"/>
+        <field name="desarrolladora_id" ref="demo_dev_cdprojekt"/>
+        <field name="genero_ids" eval="[(4, ref('demo_genero_rpg')), (4, ref('demo_genero_mundo_abierto'))]"/>
+        <field name="precio">49.99</field>
+        <field name="stock">25</field>
+        <field name="stock_minimo">5</field>
+        <field name="pegi">18</field>
+        <field name="fecha_lanzamiento">2023-09-26</field>
+        <field name="descripcion">&lt;p&gt;Un thriller de espionaje en el futurista distrito de Dogtown.&lt;/p&gt;</field>
+    </record>
+
+    <record id="demo_juego_mario_switch" model="gamestore.videojuego">
+        <field name="name">Super Mario Wonder</field>
+        <field name="plataforma_id" ref="demo_plataforma_switch"/>
+        <field name="desarrolladora_id" ref="demo_dev_nintendo"/>
+        <field name="genero_ids" eval="[(4, ref('demo_genero_accion'))]"/>
+        <field name="precio">59.99</field>
+        <field name="stock">3</field>
+        <field name="stock_minimo">5</field>
+        <field name="pegi">3</field>
+        <field name="fecha_lanzamiento">2023-10-20</field>
+        <field name="descripcion">&lt;p&gt;La evolución del juego clásico de desplazamiento lateral de Mario.&lt;/p&gt;</field>
+    </record>
+
+    <!-- ================================================================= -->
+    <!-- DATOS DEMO: Clientes                                              -->
+    <!-- ================================================================= -->
+    <record id="demo_cliente_carlos" model="res.partner">
+        <field name="name">Carlos Gómez Navarro</field>
+        <field name="email">carlos.gomez@example.com</field>
+        <field name="phone">+34 612 345 678</field>
+        <field name="city">Madrid</field>
+        <field name="es_cliente_gamestore" eval="True"/>
+    </record>
+
+    <record id="demo_cliente_lucia" model="res.partner">
+        <field name="name">Lucía Fernández Ramos</field>
+        <field name="email">lucia.gamer@example.com</field>
+        <field name="phone">+34 689 123 456</field>
+        <field name="city">Barcelona</field>
+        <field name="es_cliente_gamestore" eval="True"/>
+    </record>
+
+    <!-- ================================================================= -->
+    <!-- DATOS DEMO: Pedidos                                               -->
+    <!-- ================================================================= -->
+    <record id="demo_pedido_01" model="gamestore.pedido">
+        <field name="cliente_id" ref="demo_cliente_carlos"/>
+        <field name="estado">entregado</field>
+        <field name="fecha" eval="(datetime.now() - timedelta(days=15)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="linea_ids" eval="[
+            (0, 0, {'videojuego_id': ref('demo_juego_zelda'), 'cantidad': 1, 'precio_unitario': 69.99}),
+            (0, 0, {'videojuego_id': ref('demo_juego_mario_switch'), 'cantidad': 1, 'precio_unitario': 59.99}),
+        ]"/>
+    </record>
+
+    <record id="demo_pedido_02" model="gamestore.pedido">
+        <field name="cliente_id" ref="demo_cliente_lucia"/>
+        <field name="estado">pagado</field>
+        <field name="fecha" eval="(datetime.now() - timedelta(days=3)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="linea_ids" eval="[
+            (0, 0, {'videojuego_id': ref('demo_juego_elden_ring_ps5'), 'cantidad': 1, 'precio_unitario': 59.99}),
+        ]"/>
+    </record>
+
+    <record id="demo_pedido_03" model="gamestore.pedido">
+        <field name="cliente_id" ref="demo_cliente_carlos"/>
+        <field name="estado">confirmado</field>
+        <field name="fecha" eval="datetime.now().strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="linea_ids" eval="[
+            (0, 0, {'videojuego_id': ref('demo_juego_cyberpunk_pc'), 'cantidad': 1, 'precio_unitario': 49.99}),
+        ]"/>
+    </record>
+</odoo>

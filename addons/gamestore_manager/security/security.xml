@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Categoría que agrupa los grupos en la ficha de usuario -->
+    <record id="module_category_gamestore" model="ir.module.category">
+        <field name="name">GameStore</field>
+        <field name="description">Permisos de la tienda de videojuegos</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <!-- Dependiente: consulta el catálogo, gestiona clientes y sus propios pedidos -->
+    <record id="group_gamestore_dependiente" model="res.groups">
+        <field name="name">Dependiente</field>
+        <field name="category_id" ref="module_category_gamestore"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user')), (4, ref('base.group_partner_manager'))]"/>
+        <field name="comment">Puede vender: crear clientes y pedidos. No modifica el catálogo.</field>
+    </record>
+
+    <!-- Encargado: acceso total, informes, configuración y reposición -->
+    <record id="group_gamestore_encargado" model="res.groups">
+        <field name="name">Encargado</field>
+        <field name="category_id" ref="module_category_gamestore"/>
+        <field name="implied_ids" eval="[(4, ref('group_gamestore_dependiente'))]"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        <field name="comment">Acceso completo a GameStore, informes y configuración.</field>
+    </record>
+
+    <!-- Reglas de registro (filtran QUÉ registros puede tocar cada grupo) -->
+    <record id="rule_pedido_dependiente" model="ir.rule">
+        <field name="name">Pedidos: el dependiente solo modifica sus pedidos</field>
+        <field name="model_id" ref="model_gamestore_pedido"/>
+        <field name="domain_force">[('vendedor_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_gamestore_dependiente'))]"/>
+        <!-- La lectura no se restringe: el historial de clientes debe verse completo -->
+        <field name="perm_read" eval="False"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="rule_pedido_encargado" model="ir.rule">
+        <field name="name">Pedidos: el encargado accede a todos</field>
+        <field name="model_id" ref="model_gamestore_pedido"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_gamestore_encargado'))]"/>
+    </record>
+
+    <record id="rule_pedido_linea_dependiente" model="ir.rule">
+        <field name="name">Líneas de pedido: el dependiente solo modifica las suyas</field>
+        <field name="model_id" ref="model_gamestore_pedido_linea"/>
+        <field name="domain_force">[('pedido_id.vendedor_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_gamestore_dependiente'))]"/>
+        <field name="perm_read" eval="False"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="rule_pedido_linea_encargado" model="ir.rule">
+        <field name="name">Líneas de pedido: el encargado accede a todas</field>
+        <field name="model_id" ref="model_gamestore_pedido_linea"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_gamestore_encargado'))]"/>
+    </record>
+</odoo>

@@ -1,0 +1,14 @@
+{
+  "typeCheckingMode": "off",
+  "exclude": [
+    "addons",
+    "scripts"
+  ],
+  "ignore": [
+    "addons",
+    "scripts"
+  ],
+  "reportMissingImports": "none",
+  "reportMissingModuleSource": "none",
+  "reportGeneralTypeIssues": "none"
+}

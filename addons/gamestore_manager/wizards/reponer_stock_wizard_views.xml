@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_gamestore_reponer_stock_wizard_form" model="ir.ui.view">
+        <field name="name">gamestore.reponer.stock.wizard.form</field>
+        <field name="model">gamestore.reponer.stock.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Reponer stock">
+                <p class="text-muted">
+                    Indica cuántas unidades quieres añadir a cada videojuego.
+                    Se proponen las necesarias para alcanzar el doble del stock mínimo.
+                </p>
+                <field name="linea_ids">
+                    <list editable="bottom" create="true">
+                        <field name="videojuego_id" options="{'no_create': True}"/>
+                        <field name="stock_actual"/>
+                        <field name="stock_minimo"/>
+                        <field name="cantidad"/>
+                    </list>
+                </field>
+                <footer>
+                    <button name="action_reponer" type="object" string="Reponer" class="btn-primary" data-hotkey="q"/>
+                    <button string="Descartar" special="cancel" class="btn-secondary" data-hotkey="x"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Acción del asistente; binding_model_id la añade al menú "Acciones" de la lista de videojuegos -->
+    <record id="action_gamestore_reponer_stock_wizard" model="ir.actions.act_window">
+        <field name="name">Reponer stock</field>
+        <field name="res_model">gamestore.reponer.stock.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="model_gamestore_videojuego"/>
+        <field name="binding_view_types">list,kanban</field>
+    </record>
+</odoo>

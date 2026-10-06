@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- noupdate="1": si el usuario modifica la secuencia, no se sobrescribe al actualizar -->
+    <data noupdate="1">
+        <record id="seq_gamestore_pedido" model="ir.sequence">
+            <field name="name">Pedidos GameStore</field>
+            <field name="code">gamestore.pedido</field>
+            <field name="prefix">PED/%(year)s/</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

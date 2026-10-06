@@ -1,0 +1,28 @@
+{
+  "name": "GameStore Manager (Odoo 18)",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "odoo",
+  "workspaceFolder": "/mnt/extra-addons",
+  "forwardPorts": [8069, 5433],
+  "portsAttributes": {
+    "8069": {
+      "label": "GameStore ERP (Odoo 18)",
+      "onAutoForward": "openBrowser"
+    },
+    "5433": {
+      "label": "PostgreSQL 16",
+      "onAutoForward": "silent"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "redhat.vscode-xml"
+      ],
+      "settings": {
+        "python.analysis.typeCheckingMode": "off"
+      }
+    }
+  }
+}

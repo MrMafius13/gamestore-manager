@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Declaración del reporte imprimible -->
+    <record id="action_report_pedido" model="ir.actions.report">
+        <field name="name">Ticket / Albarán de Pedido</field>
+        <field name="model">gamestore.pedido</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">gamestore_manager.report_pedido_template</field>
+        <field name="report_file">gamestore_manager.report_pedido_template</field>
+        <field name="print_report_name">'Pedido - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_gamestore_pedido"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Plantilla QWeb del documento -->
+    <template id="report_pedido_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page" style="font-family: sans-serif; font-size: 14px;">
+                        <!-- Cabecera del documento -->
+                        <div class="row mb-4">
+                            <div class="col-8">
+                                <h2 style="color: #6c5ce7; font-weight: bold;">
+                                    🎮 GameStore — <span t-field="o.name"/>
+                                </h2>
+                                <p class="text-muted mb-0">
+                                    Fecha: <span t-field="o.fecha" t-options='{"widget": "datetime"}'/><br/>
+                                    Atendido por: <span t-field="o.vendedor_id.name"/>
+                                </p>
+                            </div>
+                            <div class="col-4 text-end">
+                                <div class="badge rounded-pill p-2 fs-6"
+                                     t-attf-style="background-color: #{'#2ecc71' if o.estado in ('pagado', 'entregado') else '#f39c12' if o.estado == 'confirmado' else '#95a5a6'}; color: white;">
+                                    Estado: <span t-field="o.estado"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Información del cliente -->
+                        <div class="card mb-4 bg-light border-0">
+                            <div class="card-body">
+                                <h6 class="card-title text-muted text-uppercase mb-2" style="font-size: 11px;">Datos del Cliente</h6>
+                                <strong t-field="o.cliente_id.name" class="fs-5"/><br/>
+                                <span t-if="o.cliente_id.email">📧 <span t-field="o.cliente_id.email"/><br/></span>
+                                <span t-if="o.cliente_id.phone">📞 <span t-field="o.cliente_id.phone"/><br/></span>
+                                <span t-if="o.cliente_id.city">📍 <span t-field="o.cliente_id.city"/>, <span t-field="o.cliente_id.country_id.name"/></span>
+                            </div>
+                        </div>
+
+                        <!-- Tabla de Líneas del pedido -->
+                        <table class="table table-sm table-striped mt-3">
+                            <thead class="table-dark" style="background-color: #2d3436;">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Videojuego</th>
+                                    <th>Plataforma</th>
+                                    <th class="text-center">Cant.</th>
+                                    <th class="text-end">Precio Unit.</th>
+                                    <th class="text-end">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="idx" t-value="1"/>
+                                <tr t-foreach="o.linea_ids" t-as="l">
+                                    <td><t t-esc="idx"/></td>
+                                    <td><strong><span t-field="l.videojuego_id.name"/></strong></td>
+                                    <td><span t-field="l.plataforma_id.name"/></td>
+                                    <td class="text-center"><span t-field="l.cantidad"/></td>
+                                    <td class="text-end"><span t-field="l.precio_unitario" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
+                                    <td class="text-end"><span t-field="l.subtotal" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
+                                    <t t-set="idx" t-value="idx + 1"/>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Totales -->
+                        <div class="row justify-content-end mt-4">
+                            <div class="col-5">
+                                <table class="table table-sm table-borderless">
+                                    <tr>
+                                        <td><strong>Total unidades:</strong></td>
+                                        <td class="text-end"><span t-field="o.cantidad_total"/></td>
+                                    </tr>
+                                    <tr class="border-top border-dark fs-5">
+                                        <td><strong>TOTAL A PAGAR:</strong></td>
+                                        <td class="text-end text-primary" style="font-weight: bold;">
+                                            <span t-field="o.total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Notas adicionales -->
+                        <div t-if="o.notas" class="alert alert-secondary mt-4">
+                            <strong>Observaciones:</strong>
+                            <div t-field="o.notas"/>
+                        </div>
+
+                        <!-- Pie de página de cortesía -->
+                        <div class="text-center text-muted mt-5" style="font-size: 12px; border-top: 1px dashed #ccc; padding-top: 15px;">
+                            ¡Gracias por comprar en GameStore! Para cambios o devoluciones conserva este comprobante.
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

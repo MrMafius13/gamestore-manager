@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menú raíz (aparece en la pantalla de aplicaciones) -->
+    <menuitem id="menu_gamestore_root"
+              name="GameStore"
+              web_icon="gamestore_manager,static/description/icon.png"
+              groups="group_gamestore_dependiente"
+              sequence="10"/>
+
+    <!-- Ventas -->
+    <menuitem id="menu_gamestore_ventas" name="Ventas" parent="menu_gamestore_root" sequence="10"/>
+    <menuitem id="menu_gamestore_pedidos" name="Pedidos" parent="menu_gamestore_ventas"
+              action="action_gamestore_pedido" sequence="10"/>
+    <menuitem id="menu_gamestore_clientes" name="Clientes" parent="menu_gamestore_ventas"
+              action="action_gamestore_clientes" sequence="20"/>
+
+    <!-- Catálogo -->
+    <menuitem id="menu_gamestore_catalogo" name="Catálogo" parent="menu_gamestore_root" sequence="20"/>
+    <menuitem id="menu_gamestore_videojuegos" name="Videojuegos" parent="menu_gamestore_catalogo"
+              action="action_gamestore_videojuego" sequence="10"/>
+    <menuitem id="menu_gamestore_reponer_stock" name="Reponer stock" parent="menu_gamestore_catalogo"
+              action="action_gamestore_reponer_stock_wizard" groups="group_gamestore_encargado" sequence="20"/>
+
+    <!-- Informes (solo encargados) -->
+    <menuitem id="menu_gamestore_informes" name="Informes" parent="menu_gamestore_root"
+              groups="group_gamestore_encargado" sequence="30"/>
+    <menuitem id="menu_gamestore_informe_ventas" name="Ventas" parent="menu_gamestore_informes"
+              action="action_gamestore_informe_ventas" sequence="10"/>
+    <menuitem id="menu_gamestore_mas_vendidos" name="Más vendidos" parent="menu_gamestore_informes"
+              action="action_gamestore_mas_vendidos" sequence="20"/>
+    <menuitem id="menu_gamestore_informe_stock" name="Stock" parent="menu_gamestore_informes"
+              action="action_gamestore_informe_stock" sequence="30"/>
+
+    <!-- Configuración (solo encargados) -->
+    <menuitem id="menu_gamestore_config" name="Configuración" parent="menu_gamestore_root"
+              groups="group_gamestore_encargado" sequence="90"/>
+    <menuitem id="menu_gamestore_plataformas" name="Plataformas" parent="menu_gamestore_config"
+              action="action_gamestore_plataforma" sequence="10"/>
+    <menuitem id="menu_gamestore_generos" name="Géneros" parent="menu_gamestore_config"
+              action="action_gamestore_genero" sequence="20"/>
+    <menuitem id="menu_gamestore_desarrolladoras" name="Desarrolladoras" parent="menu_gamestore_config"
+              action="action_gamestore_desarrolladora" sequence="30"/>
+</odoo>

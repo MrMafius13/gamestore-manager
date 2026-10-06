@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ================================================================ -->
+    <!-- LISTA                                                             -->
+    <!-- ================================================================ -->
+    <record id="view_gamestore_pedido_list" model="ir.ui.view">
+        <field name="name">gamestore.pedido.list</field>
+        <field name="model">gamestore.pedido</field>
+        <field name="arch" type="xml">
+            <list string="Pedidos" sample="1"
+                  decoration-muted="estado == 'cancelado'"
+                  decoration-bf="estado == 'borrador'">
+                <field name="name"/>
+                <field name="fecha"/>
+                <field name="cliente_id"/>
+                <field name="vendedor_id" widget="many2one_avatar_user" optional="show"/>
+                <field name="cantidad_total" optional="show"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="total" widget="monetary" sum="Total"/>
+                <field name="estado" widget="badge"
+                       decoration-info="estado == 'confirmado'"
+                       decoration-warning="estado == 'pagado'"
+                       decoration-success="estado == 'entregado'"
+                       decoration-danger="estado == 'cancelado'"/>
+                <field name="activity_ids" widget="list_activity" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ================================================================ -->
+    <!-- KANBAN agrupado por estado (tablero tipo Trello)                  -->
+    <!-- ================================================================ -->
+    <record id="view_gamestore_pedido_kanban" model="ir.ui.view">
+        <field name="name">gamestore.pedido.kanban</field>
+        <field name="model">gamestore.pedido</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="estado" sample="1" quick_create="false" group_create="false"
+                    group_delete="false" group_edit="false" records_draggable="false">
+                <field name="currency_id"/>
+                <progressbar field="estado"
+                             colors='{"borrador": "muted", "confirmado": "info", "pagado": "warning", "entregado": "success", "cancelado": "danger"}'/>
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex">
+                            <field name="name" class="fw-bold"/>
+                            <field name="total" widget="monetary" class="ms-auto fw-bold"/>
+                        </div>
+                        <field name="cliente_id"/>
+                        <footer>
+                            <field name="fecha" widget="date" class="text-muted small"/>
+                            <div class="d-flex ms-auto">
+                                <field name="activity_ids" widget="kanban_activity"/>
+                                <field name="vendedor_id" widget="many2one_avatar_user" class="ms-1"/>
+                            </div>
+                        </footer>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ================================================================ -->
+    <!-- FORMULARIO                                                        -->
+    <!-- ================================================================ -->
+    <record id="view_gamestore_pedido_form" model="ir.ui.view">
+        <field name="name">gamestore.pedido.form</field>
+        <field name="model">gamestore.pedido</field>
+        <field name="arch" type="xml">
+            <form string="Pedido">
+                <header>
+                    <button name="action_confirmar" type="object" string="Confirmar"
+                            class="btn-primary" invisible="estado != 'borrador'"/>
+                    <button name="action_pagar" type="object" string="Registrar pago"
+                            class="btn-primary" invisible="estado != 'confirmado'"/>
+                    <button name="action_entregar" type="object" string="Marcar como entregado"
+                            class="btn-primary" invisible="estado != 'pagado'"/>
+                    <button name="action_imprimir" type="object" string="Imprimir"
+                            invisible="estado in ('borrador', 'cancelado')"/>
+                    <button name="action_cancelar" type="object" string="Cancelar pedido"
+                            invisible="estado not in ('borrador', 'confirmado', 'pagado')"/>
+                    <button name="action_borrador" type="object" string="Volver a borrador"
+                            invisible="estado != 'cancelado'"/>
+                    <field name="estado" widget="statusbar" statusbar_visible="borrador,confirmado,pagado,entregado"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Cancelado" bg_color="text-bg-danger" invisible="estado != 'cancelado'"/>
+                    <widget name="web_ribbon" title="Entregado" bg_color="text-bg-success" invisible="estado != 'entregado'"/>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="cliente_id" readonly="estado != 'borrador'"
+                                   context="{'default_es_cliente_gamestore': True, 'show_address': 1}"
+                                   options="{'always_reload': True}"/>
+                            <field name="vendedor_id" widget="many2one_avatar_user" readonly="estado != 'borrador'"/>
+                        </group>
+                        <group>
+                            <field name="fecha" readonly="estado != 'borrador'"/>
+                            <field name="fecha_confirmacion" invisible="not fecha_confirmacion"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Videojuegos" name="lineas">
+                            <field name="linea_ids" readonly="estado != 'borrador'">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="videojuego_id" options="{'no_create': True}"/>
+                                    <field name="plataforma_id" optional="show"/>
+                                    <field name="stock_disponible" optional="show"
+                                           decoration-danger="stock_disponible &lt; cantidad"/>
+                                    <field name="cantidad"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                    <field name="precio_unitario" widget="monetary"/>
+                                    <field name="subtotal" widget="monetary"/>
+                                </list>
+                            </field>
+                            <group class="oe_subtotal_footer" name="totales">
+                                <field name="cantidad_total"/>
+                                <field name="total" widget="monetary" class="oe_subtotal_footer_separator"/>
+                            </group>
+                            <div class="clearfix"/>
+                        </page>
+                        <page string="Notas" name="notas">
+                            <field name="notas" placeholder="Observaciones del pedido..."/>
+                        </page>
+                        <page string="Cancelación" name="cancelacion" invisible="estado != 'cancelado'">
+                            <field name="motivo_cancelacion"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ================================================================ -->
+    <!-- BÚSQUEDA                                                          -->
+    <!-- ================================================================ -->
+    <record id="view_gamestore_pedido_search" model="ir.ui.view">
+        <field name="name">gamestore.pedido.search</field>
+        <field name="model">gamestore.pedido</field>
+        <field name="arch" type="xml">
+            <search string="Buscar pedidos">
+                <field name="name"/>
+                <field name="cliente_id"/>
+                <field name="vendedor_id"/>
+                <field name="linea_ids" string="Videojuego" filter_domain="[('linea_ids.videojuego_id', 'ilike', self)]"/>
+                <separator/>
+                <filter name="mis_pedidos" string="Mis pedidos" domain="[('vendedor_id', '=', uid)]"/>
+                <separator/>
+                <filter name="borrador" string="Borrador" domain="[('estado', '=', 'borrador')]"/>
+                <filter name="pendiente_pago" string="Pendiente de pago" domain="[('estado', '=', 'confirmado')]"/>
+                <filter name="pendiente_entrega" string="Pendiente de entrega" domain="[('estado', '=', 'pagado')]"/>
+                <filter name="entregado" string="Entregados" domain="[('estado', '=', 'entregado')]"/>
+                <filter name="cancelado" string="Cancelados" domain="[('estado', '=', 'cancelado')]"/>
+                <separator/>
+                <filter name="filtro_fecha" string="Fecha" date="fecha"/>
+                <group expand="0" string="Agrupar por">
+                    <filter name="group_cliente" string="Cliente" context="{'group_by': 'cliente_id'}"/>
+                    <filter name="group_vendedor" string="Vendedor" context="{'group_by': 'vendedor_id'}"/>
+                    <filter name="group_estado" string="Estado" context="{'group_by': 'estado'}"/>
+                    <filter name="group_fecha" string="Mes" context="{'group_by': 'fecha:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ================================================================ -->
+    <!-- CALENDARIO                                                        -->
+    <!-- ================================================================ -->
+    <record id="view_gamestore_pedido_calendar" model="ir.ui.view">
+        <field name="name">gamestore.pedido.calendar</field>
+        <field name="model">gamestore.pedido</field>
+        <field name="arch" type="xml">
+            <calendar string="Pedidos" date_start="fecha" color="estado" mode="month" quick_create="0">
+                <field name="cliente_id"/>
+                <field name="total" widget="monetary"/>
+                <field name="currency_id" invisible="1"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- ================================================================ -->
+    <!-- ACCIÓN                                                            -->
+    <!-- ================================================================ -->
+    <record id="action_gamestore_pedido" model="ir.actions.act_window">
+        <field name="name">Pedidos</field>
+        <field name="res_model">gamestore.pedido</field>
+        <field name="view_mode">list,kanban,form,calendar</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Crea tu primer pedido</p>
+            <p>Selecciona un cliente, añade videojuegos y confirma: el stock se descontará automáticamente.</p>
+        </field>
+    </record>
+</odoo>

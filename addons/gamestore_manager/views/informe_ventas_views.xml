@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_gamestore_informe_ventas_search" model="ir.ui.view">
+        <field name="name">gamestore.informe.ventas.search</field>
+        <field name="model">gamestore.informe.ventas</field>
+        <field name="arch" type="xml">
+            <search string="Análisis de ventas">
+                <field name="videojuego_id"/>
+                <field name="cliente_id"/>
+                <field name="plataforma_id"/>
+                <field name="desarrolladora_id"/>
+                <field name="vendedor_id"/>
+                <filter name="filtro_fecha" string="Fecha" date="fecha"/>
+                <separator/>
+                <filter name="pagados" string="Pagados / entregados" domain="[('estado', 'in', ('pagado', 'entregado'))]"/>
+                <group expand="0" string="Agrupar por">
+                    <filter name="group_videojuego" string="Videojuego" context="{'group_by': 'videojuego_id'}"/>
+                    <filter name="group_plataforma" string="Plataforma" context="{'group_by': 'plataforma_id'}"/>
+                    <filter name="group_desarrolladora" string="Desarrolladora" context="{'group_by': 'desarrolladora_id'}"/>
+                    <filter name="group_cliente" string="Cliente" context="{'group_by': 'cliente_id'}"/>
+                    <filter name="group_vendedor" string="Vendedor" context="{'group_by': 'vendedor_id'}"/>
+                    <filter name="group_mes" string="Mes" context="{'group_by': 'fecha:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Ventas: pivot y gráfico de líneas por mes -->
+    <record id="view_gamestore_informe_ventas_pivot" model="ir.ui.view">
+        <field name="name">gamestore.informe.ventas.pivot</field>
+        <field name="model">gamestore.informe.ventas</field>
+        <field name="arch" type="xml">
+            <pivot string="Análisis de ventas" sample="1">
+                <field name="plataforma_id" type="row"/>
+                <field name="fecha" interval="month" type="col"/>
+                <field name="importe" type="measure"/>
+                <field name="cantidad" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_gamestore_informe_ventas_graph" model="ir.ui.view">
+        <field name="name">gamestore.informe.ventas.graph</field>
+        <field name="model">gamestore.informe.ventas</field>
+        <field name="arch" type="xml">
+            <graph string="Ventas por mes" type="line" sample="1">
+                <field name="fecha" interval="month"/>
+                <field name="importe" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Más vendidos: barras ordenadas de mayor a menor -->
+    <record id="view_gamestore_mas_vendidos_graph" model="ir.ui.view">
+        <field name="name">gamestore.informe.ventas.graph.mas_vendidos</field>
+        <field name="model">gamestore.informe.ventas</field>
+        <field name="arch" type="xml">
+            <graph string="Videojuegos más vendidos" type="bar" order="desc" sample="1">
+                <field name="videojuego_id"/>
+                <field name="cantidad" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_gamestore_informe_ventas_list" model="ir.ui.view">
+        <field name="name">gamestore.informe.ventas.list</field>
+        <field name="model">gamestore.informe.ventas</field>
+        <field name="arch" type="xml">
+            <list string="Líneas vendidas" create="false" edit="false" delete="false">
+                <field name="fecha"/>
+                <field name="pedido_id"/>
+                <field name="cliente_id"/>
+                <field name="videojuego_id"/>
+                <field name="plataforma_id"/>
+                <field name="cantidad" sum="Unidades"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="importe" widget="monetary" sum="Total"/>
+                <field name="estado" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_gamestore_informe_ventas" model="ir.actions.act_window">
+        <field name="name">Análisis de ventas</field>
+        <field name="res_model">gamestore.informe.ventas</field>
+        <field name="view_mode">graph,pivot,list</field>
+        <field name="view_id" ref="view_gamestore_informe_ventas_graph"/>
+        <field name="search_view_id" ref="view_gamestore_informe_ventas_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_empty_folder">Todavía no hay ventas confirmadas</p>
+        </field>
+    </record>
+
+    <record id="action_gamestore_mas_vendidos" model="ir.actions.act_window">
+        <field name="name">Videojuegos más vendidos</field>
+        <field name="res_model">gamestore.informe.ventas</field>
+        <field name="view_mode">graph,pivot,list</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'graph', 'view_id': ref('view_gamestore_mas_vendidos_graph')}),
+            (0, 0, {'view_mode': 'pivot', 'view_id': ref('view_gamestore_informe_ventas_pivot')}),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_gamestore_informe_ventas_list')})]"/>
+        <field name="search_view_id" ref="view_gamestore_informe_ventas_search"/>
+        <field name="context">{'pivot_row_groupby': ['videojuego_id'], 'pivot_measures': ['cantidad', 'importe']}</field>
+    </record>
+</odoo>

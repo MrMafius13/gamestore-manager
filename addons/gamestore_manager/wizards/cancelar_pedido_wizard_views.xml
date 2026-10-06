@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_gamestore_cancelar_pedido_wizard_form" model="ir.ui.view">
+        <field name="name">gamestore.cancelar.pedido.wizard.form</field>
+        <field name="model">gamestore.cancelar.pedido.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Cancelar pedido">
+                <group>
+                    <field name="pedido_ids" widget="many2many_tags" readonly="1"/>
+                    <field name="motivo" placeholder="p. ej. El cliente ha cambiado de opinión"/>
+                </group>
+                <div class="alert alert-info mb-0" role="alert">
+                    Si el pedido estaba confirmado o pagado, el stock se devolverá automáticamente.
+                </div>
+                <footer>
+                    <button name="action_confirmar" type="object" string="Cancelar pedido"
+                            class="btn-danger" data-hotkey="q"/>
+                    <button string="Volver" special="cancel" class="btn-secondary" data-hotkey="x"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

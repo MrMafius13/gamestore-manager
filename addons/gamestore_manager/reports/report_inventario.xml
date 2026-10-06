@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_inventario" model="ir.actions.report">
+        <field name="name">Informe de Inventario y Stock</field>
+        <field name="model">gamestore.videojuego</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">gamestore_manager.report_inventario_template</field>
+        <field name="report_file">gamestore_manager.report_inventario_template</field>
+        <field name="print_report_name">'Informe_Inventario_GameStore'</field>
+        <field name="binding_model_id" ref="model_gamestore_videojuego"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_inventario_template">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page" style="font-family: sans-serif; font-size: 13px;">
+                    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
+                        <div>
+                            <h2 style="color: #6c5ce7; font-weight: bold; margin: 0;">🎮 GameStore — Estado de Inventario</h2>
+                            <span class="text-muted">Generado el <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M')"/></span>
+                        </div>
+                    </div>
+
+                    <table class="table table-sm table-hover align-middle mt-2">
+                        <thead class="table-dark" style="background-color: #2d3436;">
+                            <tr>
+                                <th>Videojuego</th>
+                                <th>Plataforma</th>
+                                <th>Desarrolladora</th>
+                                <th class="text-end">Precio</th>
+                                <th class="text-center">Stock Mín.</th>
+                                <th class="text-center">Stock Actual</th>
+                                <th class="text-center">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="docs" t-as="juego">
+                                <td><strong><span t-field="juego.name"/></strong></td>
+                                <td><span t-field="juego.plataforma_id.name"/></td>
+                                <td><span t-field="juego.desarrolladora_id.name"/></td>
+                                <td class="text-end"><span t-field="juego.precio" t-options='{"widget": "monetary", "display_currency": juego.currency_id}'/></td>
+                                <td class="text-center"><span t-field="juego.stock_minimo"/></td>
+                                <td class="text-center font-monospace">
+                                    <strong><span t-field="juego.stock"/></strong>
+                                </td>
+                                <td class="text-center">
+                                    <span t-if="juego.estado_stock == 'disponible'" class="badge bg-success">Disponible</span>
+                                    <span t-elif="juego.estado_stock == 'bajo'" class="badge bg-warning text-dark">Stock Bajo</span>
+                                    <span t-else="" class="badge bg-danger">Agotado</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="mt-4 p-3 bg-light rounded d-flex justify-content-around text-center">
+                        <div>
+                            <h5 class="mb-0 text-primary"><t t-esc="len(docs)"/></h5>
+                            <small class="text-muted">Títulos listados</small>
+                        </div>
+                        <div>
+                            <h5 class="mb-0 text-success"><t t-esc="sum(docs.mapped('stock'))"/></h5>
+                            <small class="text-muted">Total unidades en stock</small>
+                        </div>
+                        <div>
+                            <h5 class="mb-0 text-danger"><t t-esc="len(docs.filtered(lambda j: j.estado_stock == 'agotado'))"/></h5>
+                            <small class="text-muted">Títulos agotados</small>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

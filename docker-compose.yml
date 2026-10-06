@@ -1,0 +1,51 @@
+# =============================================================================
+# GameStore Manager - Entorno de desarrollo
+# Odoo 18 Community + PostgreSQL 16
+#
+# Uso:
+#   docker compose up -d        -> arranca Odoo en http://localhost:8069
+#   docker compose logs -f odoo -> ver logs
+#   docker compose down         -> parar (los datos se conservan en volúmenes)
+# =============================================================================
+
+services:
+  db:
+    image: postgres:16
+    container_name: gamestore_db
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+    ports:
+      - "5433:5432"
+    volumes:
+      - gamestore-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U odoo" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  odoo:
+    image: odoo:18
+    container_name: gamestore_odoo
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8069:8069"
+    environment:
+      HOST: db
+      USER: odoo
+      PASSWORD: odoo
+    volumes:
+      - ./addons:/mnt/extra-addons
+      - ./config:/etc/odoo
+      - gamestore-odoo-data:/var/lib/odoo
+    command: [ "odoo", "--dev=reload,xml" ]
+    restart: unless-stopped
+
+volumes:
+  gamestore-db-data:
+  gamestore-odoo-data:

@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ================================================================ -->
+    <!-- LISTA                                                             -->
+    <!-- ================================================================ -->
+    <record id="view_gamestore_videojuego_list" model="ir.ui.view">
+        <field name="name">gamestore.videojuego.list</field>
+        <field name="model">gamestore.videojuego</field>
+        <field name="arch" type="xml">
+            <list string="Videojuegos" sample="1"
+                  decoration-danger="estado_stock == 'agotado'"
+                  decoration-warning="estado_stock == 'bajo'">
+                <field name="name"/>
+                <field name="plataforma_id"/>
+                <field name="genero_ids" widget="many2many_tags" options="{'color_field': 'color'}" optional="show"/>
+                <field name="desarrolladora_id" optional="show"/>
+                <field name="pegi" optional="hide"/>
+                <field name="fecha_lanzamiento" optional="hide"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="precio" widget="monetary"/>
+                <field name="stock"/>
+                <field name="estado_stock" widget="badge"
+                       decoration-success="estado_stock == 'disponible'"
+                       decoration-warning="estado_stock == 'bajo'"
+                       decoration-danger="estado_stock == 'agotado'"/>
+                <field name="unidades_vendidas" optional="show"/>
+                <field name="importe_vendido" widget="monetary" optional="hide" sum="Total"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ================================================================ -->
+    <!-- KANBAN (vista principal del catálogo)                             -->
+    <!-- ================================================================ -->
+    <record id="view_gamestore_videojuego_kanban" model="ir.ui.view">
+        <field name="name">gamestore.videojuego.kanban</field>
+        <field name="model">gamestore.videojuego</field>
+        <field name="arch" type="xml">
+            <kanban sample="1">
+                <field name="currency_id"/>
+                <templates>
+                    <t t-name="card" class="flex-row">
+                        <aside class="o_kanban_aside_full">
+                            <field name="portada" widget="image" alt="Portada"
+                                   options="{'img_class': 'object-fit-cover w-100 h-100'}"/>
+                        </aside>
+                        <main class="ms-2">
+                            <field name="name" class="fw-bold fs-5"/>
+                            <field name="plataforma_id" class="text-muted"/>
+                            <field name="genero_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                            <footer class="pt-1">
+                                <field name="precio" widget="monetary" class="fw-bold fs-5"/>
+                                <field name="estado_stock" widget="badge" class="ms-auto"
+                                       decoration-success="estado_stock == 'disponible'"
+                                       decoration-warning="estado_stock == 'bajo'"
+                                       decoration-danger="estado_stock == 'agotado'"/>
+                            </footer>
+                            <div class="small text-muted">
+                                Stock: <field name="stock"/>
+                            </div>
+                        </main>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ================================================================ -->
+    <!-- FORMULARIO                                                        -->
+    <!-- ================================================================ -->
+    <record id="view_gamestore_videojuego_form" model="ir.ui.view">
+        <field name="name">gamestore.videojuego.form</field>
+        <field name="model">gamestore.videojuego</field>
+        <field name="arch" type="xml">
+            <form string="Videojuego">
+                <header>
+                    <button name="action_reponer_stock" type="object" string="Reponer stock"
+                            class="btn-primary" groups="gamestore_manager.group_gamestore_encargado"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_ver_pedidos" type="object" class="oe_stat_button" icon="fa-shopping-cart">
+                            <field name="unidades_vendidas" widget="statinfo" string="Vendidas"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Agotado" bg_color="text-bg-danger"
+                            invisible="estado_stock != 'agotado' or not active"/>
+                    <widget name="web_ribbon" title="Archivado" bg_color="text-bg-secondary" invisible="active"/>
+                    <field name="portada" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="p. ej. The Legend of Zelda: Tears of the Kingdom"/></h1>
+                        <field name="genero_ids" widget="many2many_tags"
+                               options="{'color_field': 'color', 'no_create_edit': True}" placeholder="Géneros..."/>
+                    </div>
+                    <group>
+                        <group string="Información">
+                            <field name="plataforma_id" options="{'no_create': True}"/>
+                            <field name="desarrolladora_id"/>
+                            <field name="fecha_lanzamiento"/>
+                            <field name="pegi"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group string="Precio y stock">
+                            <field name="currency_id" invisible="1"/>
+                            <field name="precio" widget="monetary"/>
+                            <field name="stock"/>
+                            <field name="stock_minimo"/>
+                            <field name="estado_stock" widget="badge"
+                                   decoration-success="estado_stock == 'disponible'"
+                                   decoration-warning="estado_stock == 'bajo'"
+                                   decoration-danger="estado_stock == 'agotado'"/>
+                            <field name="importe_vendido" widget="monetary"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Descripción" name="descripcion">
+                            <field name="descripcion" placeholder="Sinopsis, características, ediciones..."/>
+                        </page>
+                        <page string="Historial de ventas" name="ventas">
+                            <field name="linea_pedido_ids" readonly="1">
+                                <list decoration-muted="estado == 'cancelado'">
+                                    <field name="pedido_id"/>
+                                    <field name="cliente_id"/>
+                                    <field name="cantidad"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                    <field name="precio_unitario" widget="monetary"/>
+                                    <field name="subtotal" widget="monetary"/>
+                                    <field name="estado" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ================================================================ -->
+    <!-- BÚSQUEDA                                                          -->
+    <!-- ================================================================ -->
+    <record id="view_gamestore_videojuego_search" model="ir.ui.view">
+        <field name="name">gamestore.videojuego.search</field>
+        <field name="model">gamestore.videojuego</field>
+        <field name="arch" type="xml">
+            <search string="Buscar videojuegos">
+                <field name="name"/>
+                <field name="plataforma_id"/>
+                <field name="genero_ids"/>
+                <field name="desarrolladora_id"/>
+                <separator/>
+                <filter name="disponible" string="Disponibles" domain="[('estado_stock', '=', 'disponible')]"/>
+                <filter name="stock_bajo" string="Stock bajo" domain="[('estado_stock', '=', 'bajo')]"/>
+                <filter name="agotado" string="Agotados" domain="[('estado_stock', '=', 'agotado')]"/>
+                <separator/>
+                <filter name="vendidos" string="Con ventas" domain="[('unidades_vendidas', '>', 0)]"/>
+                <separator/>
+                <filter name="archivados" string="Archivados" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Agrupar por">
+                    <filter name="group_plataforma" string="Plataforma" context="{'group_by': 'plataforma_id'}"/>
+                    <filter name="group_desarrolladora" string="Desarrolladora" context="{'group_by': 'desarrolladora_id'}"/>
+                    <filter name="group_estado_stock" string="Estado del stock" context="{'group_by': 'estado_stock'}"/>
+                    <filter name="group_pegi" string="PEGI" context="{'group_by': 'pegi'}"/>
+                </group>
+                <searchpanel>
+                    <field name="plataforma_id" icon="fa-gamepad" enable_counters="1"/>
+                    <field name="genero_ids" icon="fa-tags" select="multi" enable_counters="1"/>
+                </searchpanel>
+            </search>
+        </field>
+    </record>
+
+    <!-- ================================================================ -->
+    <!-- PIVOT / GRÁFICO (informe de stock)                                -->
+    <!-- ================================================================ -->
+    <record id="view_gamestore_videojuego_pivot" model="ir.ui.view">
+        <field name="name">gamestore.videojuego.pivot</field>
+        <field name="model">gamestore.videojuego</field>
+        <field name="arch" type="xml">
+            <pivot string="Stock por plataforma" sample="1">
+                <field name="plataforma_id" type="row"/>
+                <field name="estado_stock" type="col"/>
+                <field name="stock" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_gamestore_videojuego_graph" model="ir.ui.view">
+        <field name="name">gamestore.videojuego.graph</field>
+        <field name="model">gamestore.videojuego</field>
+        <field name="arch" type="xml">
+            <graph string="Stock por plataforma" type="bar" stacked="1" sample="1">
+                <field name="plataforma_id"/>
+                <field name="estado_stock"/>
+                <field name="stock" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- ================================================================ -->
+    <!-- ACCIONES                                                          -->
+    <!-- ================================================================ -->
+    <record id="action_gamestore_videojuego" model="ir.actions.act_window">
+        <field name="name">Videojuegos</field>
+        <field name="res_model">gamestore.videojuego</field>
+        <field name="view_mode">kanban,list,form,pivot,graph</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Añade tu primer videojuego al catálogo</p>
+            <p>Indica plataforma, géneros, precio y stock disponible.</p>
+        </field>
+    </record>
+
+    <record id="action_gamestore_informe_stock" model="ir.actions.act_window">
+        <field name="name">Informe de stock</field>
+        <field name="res_model">gamestore.videojuego</field>
+        <field name="view_mode">graph,pivot,list</field>
+        <field name="view_id" ref="view_gamestore_videojuego_graph"/>
+    </record>
+</odoo>
