@@ -18,7 +18,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/codespaces/new">
+  <a href="https://codespaces.new/MrMafius13/gamestore-manager">
     <img src="https://github.com/codespaces/badge.svg" alt="Open in GitHub Codespaces"/>
   </a>
 </p>
@@ -42,15 +42,16 @@
 Puedes explorar la aplicación completa funcionando en la nube sin necesidad de tener Docker instalado en tu máquina local:
 
 <p align="center">
-  <a href="https://github.com/codespaces/new">
+  <a href="https://codespaces.new/MrMafius13/gamestore-manager">
     <img src="https://github.com/codespaces/badge.svg" alt="Open in GitHub Codespaces" width="180"/>
   </a>
 </p>
 
-1. Haz clic en el botón superior **Open in GitHub Codespaces** (o en tu fork: *Code > Codespaces > Create codespace*).
-2. GitHub levantará el contenedor de desarrollo y arrancará **Odoo 18 + PostgreSQL 16**.
-3. El script de inicio auto-inicializa la base de datos `gamestore` e instala `gamestore_manager` con catálogo y pedidos demo.
-4. **El puerto `8069` se abrirá automáticamente en tu navegador**.
+1. Haz clic en el botón superior **Open in GitHub Codespaces** (o en tu repositorio: botón verde *Code > Codespaces > Create codespace on main*).
+2. GitHub abrirá tu entorno de trabajo en la nube y arrancará automáticamente **Odoo 18 + PostgreSQL 16** con Docker en segundo plano.
+3. El script inteligente auto-inicializará la base de datos `gamestore`, instalará el módulo `gamestore_manager` y cargará el catálogo y los pedidos de prueba.
+4. **Para ver la tienda web de Odoo:**
+   * En la pestaña inferior **Puertos** (Ports, al lado del Terminal), haz clic en el icono del **globo terráqueo 🌐** correspondiente al puerto **8069** (o haz clic en el botón *"Open in Browser"* de la notificación emergente).
 5. **Credenciales de inicio de sesión:**
    * **Usuario:** `admin`
    * **Contraseña:** `admin`
@@ -245,4 +246,4 @@ GameStore Manager/
 ## 👨‍💻 Autor
 Proyecto desarrollado como demostración técnica de habilidades en desarrollo Odoo 18 / Python para portfolio profesional.
 * **LinkedIn:** [Tu Perfil](#)
-* **GitHub:** [Tu Usuario](#)
+* **GitHub:** [MrMafius13](https://github.com/MrMafius13)
