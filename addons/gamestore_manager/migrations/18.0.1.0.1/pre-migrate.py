@@ -10,6 +10,10 @@ def migrate(cr, version):
     if not version:
         return
 
+    cr.execute("SELECT 1 FROM information_schema.tables WHERE table_name = 'gamestore_plataforma'")
+    if not cr.fetchone():
+        return
+
     cr.execute("""
         DO $$
         BEGIN

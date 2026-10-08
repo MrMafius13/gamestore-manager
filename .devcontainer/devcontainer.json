@@ -9,7 +9,7 @@
     }
   },
   "postCreateCommand": "docker compose up -d && python3 scripts/wait_for_odoo.py",
-  "postStartCommand": "docker compose up -d",
+  "postStartCommand": "docker compose up -d && python3 scripts/wait_for_odoo.py",
   "customizations": {
     "vscode": {
       "extensions": [

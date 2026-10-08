@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
+<odoo noupdate="1">
     <!-- Plataformas -->
     <record id="demo_plataforma_ps5" model="gamestore.plataforma">
         <field name="name">PlayStation 5</field>
