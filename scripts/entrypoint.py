@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
 Entrypoint inteligente para Odoo 18 en GameStore Manager.
-Detecta el estado de la base de datos 'gamestore' en PostgreSQL:
-1. Espera a que PostgreSQL esté listo.
-2. Si la base de datos 'gamestore' no existe en PostgreSQL, la crea con SQL nativo.
+Detecta el estado de PostgreSQL y de la base de datos 'gamestore':
+1. Espera a que PostgreSQL esté listo y acepta conexiones en db:5432.
+2. Si la base de datos 'gamestore' no existe, la crea con SQL nativo.
 3. Si la base de datos no tiene las tablas de Odoo, ejecuta la inicialización completa:
-   instala 'gamestore_manager' con los datos demo del catálogo y pedidos.
+   instala 'gamestore_manager' con todo el catálogo y pedidos de prueba.
 4. Arranca el servidor web Odoo 18 en http://0.0.0.0:8069.
 """
 import os
@@ -17,45 +17,48 @@ import psycopg2
 
 def wait_and_prepare_db(max_retries=60):
     print("⏳ [1/3] Conectando a PostgreSQL (db:5432)...", flush=True)
-    conn = None
+    conn_gs = None
+    
+    # 1. Intentar conectar directamente a la base de datos 'gamestore' (creada por POSTGRES_DB)
     for attempt in range(max_retries):
         try:
-            conn = psycopg2.connect(
+            conn_gs = psycopg2.connect(
                 host="db",
                 port=5432,
                 user="odoo",
                 password="odoo",
-                dbname="postgres",
+                dbname="gamestore",
             )
-            conn.autocommit = True
+            conn_gs.autocommit = True
             break
         except Exception:
+            # Si no existe 'gamestore', intentar conectar a 'postgres' para crearla
+            try:
+                conn_pg = psycopg2.connect(
+                    host="db",
+                    port=5432,
+                    user="odoo",
+                    password="odoo",
+                    dbname="postgres",
+                )
+                conn_pg.autocommit = True
+                cur_pg = conn_pg.cursor()
+                cur_pg.execute("SELECT 1 FROM pg_database WHERE datname = 'gamestore'")
+                if not cur_pg.fetchone():
+                    print("📦 Creando base de datos 'gamestore' en PostgreSQL...", flush=True)
+                    cur_pg.execute("CREATE DATABASE gamestore ENCODING 'utf8' OWNER odoo")
+                conn_pg.close()
+            except Exception:
+                pass
             time.sleep(1)
 
-    if not conn:
+    if not conn_gs:
         print("❌ Error: No se pudo conectar a PostgreSQL.", flush=True)
         return False
 
-    cur = conn.cursor()
-    cur.execute("SELECT 1 FROM pg_database WHERE datname = 'gamestore'")
-    db_exists = cur.fetchone() is not None
-
-    if not db_exists:
-        print("📦 [2/3] Creando base de datos 'gamestore' en PostgreSQL...", flush=True)
-        cur.execute("CREATE DATABASE gamestore ENCODING 'utf8' OWNER odoo")
-        print("✅ Base de datos 'gamestore' creada en PostgreSQL.", flush=True)
-    conn.close()
-
-    # Comprobar si ya tiene tablas inicializadas de Odoo
-    print("🔍 Comprobando tablas de Odoo en 'gamestore'...", flush=True)
+    # 2. Comprobar si ya tiene tablas inicializadas de Odoo (ir_module_module)
+    print("🔍 [2/3] Comprobando tablas de Odoo en 'gamestore'...", flush=True)
     try:
-        conn_gs = psycopg2.connect(
-            host="db",
-            port=5432,
-            user="odoo",
-            password="odoo",
-            dbname="gamestore",
-        )
         cur_gs = conn_gs.cursor()
         cur_gs.execute(
             "SELECT 1 FROM information_schema.tables WHERE table_name = 'ir_module_module'"
@@ -65,6 +68,8 @@ def wait_and_prepare_db(max_retries=60):
         return tables_exist
     except Exception as e:
         print(f"⚠️ Error comprobando tablas: {e}", flush=True)
+        if conn_gs:
+            conn_gs.close()
         return False
 
 
