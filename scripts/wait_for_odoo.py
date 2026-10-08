@@ -12,7 +12,7 @@ import subprocess
 import urllib.request
 
 URL = "http://localhost:8069/web/login"
-MAX_SECONDS = 300
+MAX_SECONDS = 150
 
 print("⏳ Esperando a que Odoo 18 inicialice la base de datos y arranque en http://localhost:8069...", flush=True)
 start_time = time.time()
