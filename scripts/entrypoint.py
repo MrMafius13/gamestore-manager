@@ -2,24 +2,23 @@
 """
 Entrypoint inteligente para Odoo 18 en GameStore Manager.
 Detecta el estado de PostgreSQL y de la base de datos 'gamestore':
-1. Espera a que PostgreSQL esté listo y acepta conexiones en db:5432.
+1. Espera a que PostgreSQL esté listo y acepte conexiones en db:5432.
 2. Si la base de datos 'gamestore' no existe, la crea con SQL nativo.
-3. Si la base de datos no tiene las tablas de Odoo, ejecuta la inicialización completa:
-   instala 'gamestore_manager' con todo el catálogo y pedidos de prueba.
-4. Arranca el servidor web Odoo 18 en http://0.0.0.0:8069.
+3. Si 'gamestore_manager' no está instalado, arranca Odoo con '-i gamestore_manager'
+   para instalar el módulo con su catálogo y pedidos demo en un solo paso.
+4. Arranca directamente el servidor web Odoo 18 en http://0.0.0.0:8069.
 """
 import os
 import sys
 import time
-import subprocess
 import psycopg2
 
 
 def wait_and_prepare_db(max_retries=60):
-    print("⏳ [1/3] Conectando a PostgreSQL (db:5432)...", flush=True)
+    print("⏳ [1/2] Conectando a PostgreSQL (db:5432)...", flush=True)
     conn_gs = None
-    
-    # 1. Intentar conectar directamente a la base de datos 'gamestore' (creada por POSTGRES_DB)
+
+    # 1. Conectar directamente a 'gamestore' (creada automáticamente por POSTGRES_DB)
     for attempt in range(max_retries):
         try:
             conn_gs = psycopg2.connect(
@@ -32,7 +31,7 @@ def wait_and_prepare_db(max_retries=60):
             conn_gs.autocommit = True
             break
         except Exception:
-            # Si no existe 'gamestore', intentar conectar a 'postgres' para crearla
+            # Fallback: intentar conectar a 'postgres' para crear 'gamestore' si no existe
             try:
                 conn_pg = psycopg2.connect(
                     host="db",
@@ -53,11 +52,11 @@ def wait_and_prepare_db(max_retries=60):
             time.sleep(1)
 
     if not conn_gs:
-        print("❌ Error: No se pudo conectar a PostgreSQL.", flush=True)
+        print("❌ Error: No se pudo conectar a PostgreSQL tras varios intentos.", flush=True)
         return False
 
-    # 2. Comprobar si ya tiene el módulo 'gamestore_manager' instalado en Odoo
-    print("🔍 [2/3] Comprobando si 'gamestore_manager' está instalado en 'gamestore'...", flush=True)
+    # 2. Comprobar si 'gamestore_manager' ya está completamente instalado
+    print("🔍 [2/2] Comprobando estado de 'gamestore_manager'...", flush=True)
     try:
         cur_gs = conn_gs.cursor()
         cur_gs.execute(
@@ -73,7 +72,7 @@ def wait_and_prepare_db(max_retries=60):
         conn_gs.close()
         return False
     except Exception as e:
-        print(f"⚠️ Error comprobando tablas: {e}", flush=True)
+        print(f"⚠️ Nota al comprobar tablas: {e}", flush=True)
         if conn_gs:
             conn_gs.close()
         return False
@@ -82,34 +81,19 @@ def wait_and_prepare_db(max_retries=60):
 def main():
     already_initialized = wait_and_prepare_db()
 
+    args = sys.argv[1:] if len(sys.argv) > 1 else ["--dev=reload,xml"]
+
     if not already_initialized:
         print(
-            "🚀 [3/3] Inicializando Odoo 18 e instalando 'gamestore_manager' con catálogo y datos demo...",
+            "🚀 Inicializando Odoo 18 e instalando 'gamestore_manager' con catálogo y datos demo...",
             flush=True,
         )
-        res = subprocess.run(
-            [
-                "odoo",
-                "-c",
-                "/etc/odoo/odoo.conf",
-                "-d",
-                "gamestore",
-                "-i",
-                "gamestore_manager",
-                "--without-demo=False",
-                "--stop-after-init",
-            ]
-        )
-        if res.returncode == 0:
-            print("✅ 'gamestore_manager' instalado y base de datos inicializada correctamente.", flush=True)
-        else:
-            print(f"⚠️ Odoo init finalizó con código {res.returncode}", flush=True)
+        cmd = ["odoo", "-c", "/etc/odoo/odoo.conf", "-d", "gamestore", "-i", "gamestore_manager"] + args
     else:
-        print("✅ Base de datos 'gamestore' ya inicializada. Omitiendo instalación inicial.", flush=True)
+        print("✅ Base de datos 'gamestore' ya inicializada. Arrancando servidor web...", flush=True)
+        cmd = ["odoo", "-c", "/etc/odoo/odoo.conf", "-d", "gamestore"] + args
 
     print("🌐 Arrancando servidor web Odoo 18 en http://0.0.0.0:8069...", flush=True)
-    args = sys.argv[1:] if len(sys.argv) > 1 else ["--dev=reload,xml"]
-    cmd = ["odoo", "-c", "/etc/odoo/odoo.conf", "-d", "gamestore"] + args
     os.execvp("odoo", cmd)
 
 
