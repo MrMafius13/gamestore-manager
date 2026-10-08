@@ -403,7 +403,7 @@
     <record id="demo_pedido_01" model="gamestore.pedido">
         <field name="cliente_id" ref="demo_cliente_carlos"/>
         <field name="estado">entregado</field>
-        <field name="fecha" eval="(datetime.now() - timedelta(days=45)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="fecha">2026-08-25 10:30:00</field>
         <field name="linea_ids" eval="[
             (0, 0, {'videojuego_id': ref('demo_juego_zelda'), 'cantidad': 1, 'precio_unitario': 69.99}),
             (0, 0, {'videojuego_id': ref('demo_juego_mario_switch'), 'cantidad': 1, 'precio_unitario': 59.99}),
@@ -414,7 +414,7 @@
     <record id="demo_pedido_02" model="gamestore.pedido">
         <field name="cliente_id" ref="demo_cliente_lucia"/>
         <field name="estado">entregado</field>
-        <field name="fecha" eval="(datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="fecha">2026-09-08 16:45:00</field>
         <field name="linea_ids" eval="[
             (0, 0, {'videojuego_id': ref('demo_juego_elden_ring_ps5'), 'cantidad': 1, 'precio_unitario': 69.99}),
             (0, 0, {'videojuego_id': ref('demo_juego_spiderman2_ps5'), 'cantidad': 1, 'precio_unitario': 69.99}),
@@ -425,7 +425,7 @@
     <record id="demo_pedido_03" model="gamestore.pedido">
         <field name="cliente_id" ref="demo_cliente_alejandro"/>
         <field name="estado">entregado</field>
-        <field name="fecha" eval="(datetime.now() - timedelta(days=20)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="fecha">2026-09-18 12:15:00</field>
         <field name="linea_ids" eval="[
             (0, 0, {'videojuego_id': ref('demo_juego_baldurs_gate_pc'), 'cantidad': 1, 'precio_unitario': 59.99}),
             (0, 0, {'videojuego_id': ref('demo_juego_rdr2_pc'), 'cantidad': 1, 'precio_unitario': 29.99}),
@@ -436,7 +436,7 @@
     <record id="demo_pedido_04" model="gamestore.pedido">
         <field name="cliente_id" ref="demo_cliente_elena"/>
         <field name="estado">entregado</field>
-        <field name="fecha" eval="(datetime.now() - timedelta(days=12)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="fecha">2026-09-26 18:00:00</field>
         <field name="linea_ids" eval="[
             (0, 0, {'videojuego_id': ref('demo_juego_mariokart_switch'), 'cantidad': 2, 'precio_unitario': 49.99}),
         ]"/>
@@ -446,7 +446,7 @@
     <record id="demo_pedido_05" model="gamestore.pedido">
         <field name="cliente_id" ref="demo_cliente_david"/>
         <field name="estado">entregado</field>
-        <field name="fecha" eval="(datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="fecha">2026-10-01 11:20:00</field>
         <field name="linea_ids" eval="[
             (0, 0, {'videojuego_id': ref('demo_juego_forza_xbox'), 'cantidad': 1, 'precio_unitario': 49.99}),
             (0, 0, {'videojuego_id': ref('demo_juego_starfield_xbox'), 'cantidad': 1, 'precio_unitario': 54.99}),
@@ -457,7 +457,7 @@
     <record id="demo_pedido_06" model="gamestore.pedido">
         <field name="cliente_id" ref="demo_cliente_sara"/>
         <field name="estado">pagado</field>
-        <field name="fecha" eval="(datetime.now() - timedelta(days=4)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="fecha">2026-10-04 14:10:00</field>
         <field name="linea_ids" eval="[
             (0, 0, {'videojuego_id': ref('demo_juego_cyberpunk_pc'), 'cantidad': 1, 'precio_unitario': 49.99}),
             (0, 0, {'videojuego_id': ref('demo_juego_re4_pc'), 'cantidad': 1, 'precio_unitario': 39.99}),
@@ -468,7 +468,7 @@
     <record id="demo_pedido_07" model="gamestore.pedido">
         <field name="cliente_id" ref="demo_cliente_marcos"/>
         <field name="estado">pagado</field>
-        <field name="fecha" eval="(datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="fecha">2026-10-06 17:30:00</field>
         <field name="linea_ids" eval="[
             (0, 0, {'videojuego_id': ref('demo_juego_ffxvi_ps5'), 'cantidad': 1, 'precio_unitario': 59.99}),
         ]"/>
@@ -478,7 +478,7 @@
     <record id="demo_pedido_08" model="gamestore.pedido">
         <field name="cliente_id" ref="demo_cliente_paula"/>
         <field name="estado">pagado</field>
-        <field name="fecha" eval="(datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="fecha">2026-10-07 19:15:00</field>
         <field name="linea_ids" eval="[
             (0, 0, {'videojuego_id': ref('demo_juego_metroid_switch'), 'cantidad': 1, 'precio_unitario': 44.99}),
             (0, 0, {'videojuego_id': ref('demo_juego_tlou2_ps4'), 'cantidad': 1, 'precio_unitario': 29.99}),
@@ -489,7 +489,7 @@
     <record id="demo_pedido_09" model="gamestore.pedido">
         <field name="cliente_id" ref="demo_cliente_carlos"/>
         <field name="estado">confirmado</field>
-        <field name="fecha" eval="datetime.now().strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="fecha">2026-10-08 08:30:00</field>
         <field name="linea_ids" eval="[
             (0, 0, {'videojuego_id': ref('demo_juego_spiderman2_ps5'), 'cantidad': 1, 'precio_unitario': 69.99}),
         ]"/>
@@ -499,7 +499,7 @@
     <record id="demo_pedido_10" model="gamestore.pedido">
         <field name="cliente_id" ref="demo_cliente_alejandro"/>
         <field name="estado">confirmado</field>
-        <field name="fecha" eval="datetime.now().strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="fecha">2026-10-08 09:10:00</field>
         <field name="linea_ids" eval="[
             (0, 0, {'videojuego_id': ref('demo_juego_zelda'), 'cantidad': 1, 'precio_unitario': 69.99}),
         ]"/>
@@ -509,7 +509,7 @@
     <record id="demo_pedido_11" model="gamestore.pedido">
         <field name="cliente_id" ref="demo_cliente_lucia"/>
         <field name="estado">borrador</field>
-        <field name="fecha" eval="datetime.now().strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="fecha">2026-10-08 09:40:00</field>
         <field name="linea_ids" eval="[
             (0, 0, {'videojuego_id': ref('demo_juego_baldurs_gate_pc'), 'cantidad': 1, 'precio_unitario': 59.99}),
         ]"/>
@@ -519,7 +519,7 @@
     <record id="demo_pedido_12" model="gamestore.pedido">
         <field name="cliente_id" ref="demo_cliente_david"/>
         <field name="estado">cancelado</field>
-        <field name="fecha" eval="(datetime.now() - timedelta(days=8)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="fecha">2026-09-30 15:00:00</field>
         <field name="motivo_cancelacion">El cliente solicitó anulación por compra duplicada.</field>
         <field name="linea_ids" eval="[
             (0, 0, {'videojuego_id': ref('demo_juego_rdr2_pc'), 'cantidad': 1, 'precio_unitario': 29.99}),

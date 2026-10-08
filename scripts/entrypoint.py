@@ -56,16 +56,22 @@ def wait_and_prepare_db(max_retries=60):
         print("❌ Error: No se pudo conectar a PostgreSQL.", flush=True)
         return False
 
-    # 2. Comprobar si ya tiene tablas inicializadas de Odoo (ir_module_module)
-    print("🔍 [2/3] Comprobando tablas de Odoo en 'gamestore'...", flush=True)
+    # 2. Comprobar si ya tiene el módulo 'gamestore_manager' instalado en Odoo
+    print("🔍 [2/3] Comprobando si 'gamestore_manager' está instalado en 'gamestore'...", flush=True)
     try:
         cur_gs = conn_gs.cursor()
         cur_gs.execute(
             "SELECT 1 FROM information_schema.tables WHERE table_name = 'ir_module_module'"
         )
-        tables_exist = cur_gs.fetchone() is not None
+        if cur_gs.fetchone():
+            cur_gs.execute(
+                "SELECT 1 FROM ir_module_module WHERE name = 'gamestore_manager' AND state = 'installed'"
+            )
+            module_installed = cur_gs.fetchone() is not None
+            conn_gs.close()
+            return module_installed
         conn_gs.close()
-        return tables_exist
+        return False
     except Exception as e:
         print(f"⚠️ Error comprobando tablas: {e}", flush=True)
         if conn_gs:
