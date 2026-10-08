@@ -1,0 +1,10 @@
+# Solo para GitHub Codespaces (se activa desde .devcontainer/devcontainer.json).
+services:
+  db:
+    network_mode: host
+    ports: !reset []
+  odoo:
+    network_mode: host
+    ports: !reset []
+    environment:
+      DB_HOST: 127.0.0.1

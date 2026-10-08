@@ -13,16 +13,18 @@ import sys
 import time
 import psycopg2
 
+DB_HOST = os.environ.get("DB_HOST", "db")
+
 
 def wait_and_prepare_db(max_retries=60):
-    print("⏳ [1/2] Conectando a PostgreSQL (db:5432)...", flush=True)
+    print(f"⏳ [1/2] Conectando a PostgreSQL ({DB_HOST}:5432)...", flush=True)
     conn_gs = None
 
     # 1. Conectar directamente a 'gamestore' (creada automáticamente por POSTGRES_DB)
     for attempt in range(max_retries):
         try:
             conn_gs = psycopg2.connect(
-                host="db",
+                host=DB_HOST,
                 port=5432,
                 user="odoo",
                 password="odoo",
@@ -35,7 +37,7 @@ def wait_and_prepare_db(max_retries=60):
             # Fallback: intentar conectar a 'postgres' para crear 'gamestore' si no existe
             try:
                 conn_pg = psycopg2.connect(
-                    host="db",
+                    host=DB_HOST,
                     port=5432,
                     user="odoo",
                     password="odoo",
@@ -84,6 +86,8 @@ def main():
     already_initialized = wait_and_prepare_db()
 
     args = sys.argv[1:] if len(sys.argv) > 1 else ["--dev=reload,xml"]
+    if os.environ.get("DB_HOST"):
+        args.append(f"--db_host={os.environ['DB_HOST']}")
 
     if not already_initialized:
         print(

@@ -1,10 +1,13 @@
 {
   "name": "GameStore Manager (Odoo 18)",
   "forwardPorts": [8069],
+  "containerEnv": {
+    "COMPOSE_FILE": "docker-compose.yml:docker-compose.codespaces.yml"
+  },
   "portsAttributes": {
     "8069": {
       "label": "GameStore ERP (Odoo 18)",
-      "onAutoForward": "openBrowser",
+      "onAutoForward": "notify",
       "visibility": "public"
     }
   },
