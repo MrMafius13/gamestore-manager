@@ -33,6 +33,7 @@
 * [Arquitectura y Tecnologías](#-arquitectura-y-tecnologías)
 * [Instalación Local con Docker](#-instalación-local-con-docker)
 * [Credenciales y Acceso a Odoo](#-credenciales-y-acceso-a-odoo)
+* [Guía de Uso: Cómo Registrar Nuevos Datos](#-guía-de-uso-cómo-registrar-nuevos-datos)
 * [API REST y Demostración](#-api-rest-y-demostración)
 * [Ejecución de Tests Automatizados](#-ejecución-de-tests-automatizados)
 * [Estructura del Proyecto](#-estructura-del-proyecto)
@@ -152,6 +153,50 @@ Docker levantará los contenedores de Odoo 18 y PostgreSQL 16. El entrypoint aut
    * **Email / Usuario:** `admin`
    * **Contraseña:** `admin`
 3. ¡Listo! Accederás directamente al panel principal con la aplicación **GameStore Manager** activa, con catálogo precargado, clientes, pedidos e informes listos para explorar.
+
+---
+
+## 🎮 Guía de Uso: Cómo Registrar Nuevos Datos
+
+El módulo cuenta con una interfaz web completa en Odoo que te permite gestionar todo el ciclo del negocio de forma intuitiva:
+
+### 1. Registrar un Nuevo Videojuego
+1. En el menú superior, ve a **Catálogo ➔ Videojuegos**.
+2. Haz clic en el botón **Nuevo** (o New / icono `+`).
+3. Rellena la ficha del producto:
+   * **Nombre:** Título del juego (ej: *Hollow Knight: Silksong*).
+   * **Plataforma:** Selecciona una del desplegable o escribe una nueva para crearla al instante.
+   * **Desarrolladora:** Elige o crea la desarrolladora.
+   * **Géneros:** Añade las etiquetas deseadas (RPG, Acción, Metroidvania...).
+   * **Precio:** Precio de venta al público en euros.
+   * **Stock y Stock mínimo:** Unidades actuales en inventario y el umbral de alerta.
+   * **PEGI:** Clasificación por edades (3, 7, 12, 16 o 18).
+   * **Portada:** Puedes subir una imagen de portada haciendo clic en el icono de cámara.
+4. Guarda el registro (o haz clic fuera si el autoguardado está activo). El sistema calculará automáticamente si su estado es *Disponible*, *Stock Bajo* o *Agotado*.
+
+### 2. Registrar un Nuevo Cliente
+1. Ve a **Ventas ➔ Clientes**.
+2. Haz clic en **Nuevo**.
+3. Introduce el nombre, email, teléfono y dirección del contacto.
+4. *Nota:* Al crear cualquier pedido para un contacto de Odoo, el sistema lo marcará automáticamente como cliente de GameStore y empezará a registrar sus estadísticas de compra acumulada y plataforma favorita.
+
+### 3. Registrar una Venta / Pedido (Ciclo Completo)
+1. Ve a **Ventas ➔ Pedidos** y pulsa **Nuevo**.
+2. Selecciona el **Cliente** del desplegable.
+3. En la pestaña **Videojuegos**, haz clic en **Agregar una línea** (Add a line):
+   * Selecciona el videojuego: verás el stock actual disponible y el precio unitario se congelará automáticamente según la tarifa del catálogo.
+   * Ajusta la **Cantidad** deseada.
+4. **Flujo de botones de acción:**
+   * Haz clic en **Confirmar:** Odoo valida que haya existencias suficientes y **descuenta de forma atómica el stock** del inventario. El pedido pasa a estado *Confirmado*.
+   * Haz clic en **Registrar pago:** Pasa a estado *Pagado*.
+   * Haz clic en **Marcar como entregado:** Completa la venta y pasa a estado *Entregado*.
+   * Haz clic en **Imprimir:** Genera y descarga el albarán / ticket de compra oficial en **PDF (QWeb)**.
+5. **Si necesitas anularlo:** Haz clic en **Cancelar pedido** para abrir el asistente obligatorio donde indicar el motivo. Si el stock ya se había descontado, **se devolverá automáticamente al inventario** y se registrará en el chatter de auditoría.
+
+### 4. Reposición Masiva de Inventario
+1. Ve a **Catálogo ➔ Reponer stock** (o selecciona varios juegos en la vista lista y pulsa *Acción ➔ Reponer stock*).
+2. El asistente calculará automáticamente la cantidad sugerida para alcanzar el doble del stock de seguridad.
+3. Pulsa **Confirmar reposición** y los stocks se actualizarán de forma inmediata.
 
 ---
 

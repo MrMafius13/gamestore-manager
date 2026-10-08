@@ -4,10 +4,11 @@
   "portsAttributes": {
     "8069": {
       "label": "GameStore ERP (Odoo 18)",
-      "onAutoForward": "notify"
+      "onAutoForward": "openBrowser",
+      "visibility": "public"
     }
   },
-  "postCreateCommand": "docker compose up -d",
+  "postCreateCommand": "docker compose up -d && python3 scripts/wait_for_odoo.py",
   "postStartCommand": "docker compose up -d",
   "customizations": {
     "vscode": {
