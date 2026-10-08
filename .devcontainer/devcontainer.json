@@ -1,6 +1,8 @@
 {
   "name": "GameStore Manager (Odoo 18)",
-  "forwardPorts": [8069],
+  "forwardPorts": [
+    8069
+  ],
   "containerEnv": {
     "COMPOSE_FILE": "docker-compose.yml:docker-compose.codespaces.yml"
   },
@@ -11,8 +13,8 @@
       "visibility": "public"
     }
   },
-  "postCreateCommand": "docker compose up -d && python3 scripts/wait_for_odoo.py",
-  "postStartCommand": "docker compose up -d && python3 scripts/wait_for_odoo.py",
+  "postCreateCommand": "docker compose -f docker-compose.yml -f docker-compose.codespaces.yml up -d && python3 scripts/wait_for_odoo.py",
+  "postStartCommand": "docker compose -f docker-compose.yml -f docker-compose.codespaces.yml up -d && python3 scripts/wait_for_odoo.py",
   "customizations": {
     "vscode": {
       "extensions": [
