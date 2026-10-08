@@ -27,6 +27,7 @@ def wait_and_prepare_db(max_retries=60):
                 user="odoo",
                 password="odoo",
                 dbname="gamestore",
+                connect_timeout=5,
             )
             conn_gs.autocommit = True
             break
@@ -39,6 +40,7 @@ def wait_and_prepare_db(max_retries=60):
                     user="odoo",
                     password="odoo",
                     dbname="postgres",
+                    connect_timeout=5,
                 )
                 conn_pg.autocommit = True
                 cur_pg = conn_pg.cursor()
@@ -47,8 +49,8 @@ def wait_and_prepare_db(max_retries=60):
                     print("📦 Creando base de datos 'gamestore' en PostgreSQL...", flush=True)
                     cur_pg.execute("CREATE DATABASE gamestore ENCODING 'utf8' OWNER odoo")
                 conn_pg.close()
-            except Exception:
-                pass
+            except Exception as e:
+                print(f"   intento {attempt+1}: {e}", flush=True)
             time.sleep(1)
 
     if not conn_gs:
